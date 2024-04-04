@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Heat Exhaustion/Heat Stroke Instances Today</title>
+    <style>
+        body {
+            font-family: Poppins, sans-serif;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            border-right: none;
+        }
+        img {
+            display: block;
+            margin: 20px auto;
+            max-width: 45%;
+            height: auto;
+        }
+        .generated-charts img {
+            display: inline-block;
+            margin: 20px;
+            max-width: 45%;
+            height: auto;
+        }
+        .Info {
+            margin-top: 8rem !important;
+        }
+
+    </style>
+</head>
+<body>
+    {% include 'header.html' %} <!-- https://stackoverflow.com/questions/8988855/include-another-html-file-in-a-html-file -->
+    <div class="container">
+        <div class="Info">
+            <h2>Users at Risk of Heat Exhaustion Today</h2>
+            <table>
+                <tr>
+                    <th>User ID</th>
+                    <th>Date & Time</th>
+                    <th>Temperature (°C)</th>
+                    <th>Sweat Chloride (mmol/L)</th>
+                </tr>
+                {% for user_data in user_output %}
+                <tr>
+                    <td>{{ user_data.split(' - ')[0] }}</td>
+                    <td>{{ user_data.split(' - ')[1] }}</td>
+                    <td>{{ user_data.split(' - ')[2] }}</td>
+                    <td>{{ user_data.split(' - ')[3] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div>
+            <h2>Users at Risk of Heat Exhaustion Due to Health Issues</h2>
+            <table>
+                <tr>
+                    <th>User ID</th>
+                    <th>Date & Time</th>
+                    <th>Obesity</th>
+                    <th>Heart Disease</th>
+                    <th>High Blood Pressure</th>
+                </tr>
+                {% for user_data in disease_output %}
+                <tr>
+                    <td>{{ user_data.split(' - ')[0] }}</td>
+                    <td>{{ user_data.split(' - ')[1] }}</td>
+                    <td>{{ user_data.split(' - ')[2] }}</td>
+                    <td>{{ user_data.split(' - ')[3] }}</td>
+                    <td>{{ user_data.split(' - ')[4] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+        <div class="generated-charts">
+            <h2>Statistics on Users at Risk of Heat Exhaustion Today</h2>
+            <img src="{{ url_for('static', filename='Images/bar_chart.png') }}" alt="Bar Chart">
+            <img src="{{ url_for('static', filename='Images/pie_chart.png') }}" alt="Pie Chart">
+        </div>
+    </div>
+</body>
+</html>

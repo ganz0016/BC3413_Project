@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retrieve Data</title>
+    <style>
+        body {
+            font-family: Poppins, sans-serif;
+            margin: 20px;
+        }
+        form {
+            width: 300px;
+            margin: 0 auto;
+        }
+        table {
+            width: 100%;
+        }
+        table td {
+            padding: 10px;
+        }
+        input[type="text"], input[type="submit"] {
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        input[type="submit"] {
+            background-color: #357867;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #357867;
+        }
+        h2 {
+            font-size: 25px !important;
+            font-family: Poppins, sans-serif;
+            text-align: center;
+            margin-top: 8rem !important;
+        }
+
+        small{
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %} <!-- https://stackoverflow.com/questions/8988855/include-another-html-file-in-a-html-file -->
+    <h2>Please enter your username to retrieve data</h2>
+    <form action="http://localhost:5000/gp_3" method="POST">
+        <table>
+            <tr>
+                <td>Username:</td>
+                <td><input type="text" name="user_id" required></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <small>Note: Enter the correct user_id to access data. Incorrect user_id will result in access denial.</small>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="Submit"></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>

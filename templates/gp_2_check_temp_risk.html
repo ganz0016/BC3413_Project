@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Temperature Risk Check</title>
+    <style>
+        body {
+            font-family: Poppins, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #357867;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        table {
+            margin-top: 20px; /* Add margin to separate the table from the previous paragraph */
+            width: auto; /* Set width to auto so it only takes up the necessary space */
+            border: 2px solid #000; /* Border for the entire table */
+            border-collapse: collapse; /* Remove internal borders */
+            margin: 0 auto; /* Center the table horizontally */
+        }
+
+        td {
+            padding: 8px;
+            text-align: left; /* Align content to the left within table cells */
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %} <!-- https://stackoverflow.com/questions/8988855/include-another-html-file-in-a-html-file -->
+    <div class="container">
+        {% set threshold_temp_HE = 38.3 %}
+        {% set threshold_sweat_chloride_HE = 18.5 %}
+        {% set threshold_temp_EHS = 41.6 %}
+
+        {% if data[3] > threshold_temp_EHS %}
+            <h2>Warning: You are at risk of Exertional Heat Stroke.</h2>
+            <p>Please call 995 immediately for medical assistance.</p>
+            <a href="http://localhost:5000/" class="button">Go to Homepage</a>
+
+        {% elif data[3] > threshold_temp_HE or
+                data[5] > threshold_sweat_chloride_HE
+                or data[6] == "y" or data[7] == "y" or data[8] == "y" %}
+            <h2>Warning: You are at risk of Heat Exhaustion</h2>
+            <p>Symptoms may include dizziness, malaise, fatigue, nausea, vomiting, and headache.</p>
+
+            <table>
+                <tr><td><strong>Please consider taking the following steps:</strong></td></tr>
+                <tr><td>1. Move into a cool place.</td></tr>
+                <tr><td>2. Remove all unnecessary clothing like a jacket or socks.</td></tr>
+                <tr><td>3. Drink a sports or rehydration drink, or cool water.</td></tr>
+                <tr><td>4. Cool your skin – spray or sponge them with cool water and fan them.</td></tr>
+                <tr><td>5. Cold packs, wrapped in a cloth and put under the armpits or on the neck.</td></tr>
+            </table>
+
+            <a href="http://localhost:5000/" class="button">Go to Homepage</a>
+        {% else %}
+            <h2>Your temperature is in the safe zone.</h2>
+            <a href="http://localhost:5000/" class="button">Go to Homepage</a>
+        {% endif %}
+    </div>
+</body>
+</html>

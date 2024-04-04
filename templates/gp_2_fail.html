@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wrong Entry</title>
+    <style>
+        body {
+            font-family: Poppins, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        h2 {
+            font-family: Poppins, sans-serif;
+            text-align: center;
+            font-size: 20px !important;
+            margin-top: 8rem !important;
+        }
+        p {
+            font-family: Arial, sans-serif;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+.button-container {
+  text-align: center;
+}
+
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #357867;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.button:hover {
+  background-color: #357867;
+}
+
+    </style>
+</head>
+<body>
+{% include 'header.html' %} <!-- https://stackoverflow.com/questions/8988855/include-another-html-file-in-a-html-file -->
+    <h2>You have entered a user ID that does not exist</h2>
+    <p>Please click the button below to return to the homepage:</p>
+    <div class="button-container">
+    <a href="http://localhost:5000/gp_2" class="button">Go to Record Temperature Page</a>
+    </div>
+
+</body>
+</html>

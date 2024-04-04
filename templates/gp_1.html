@@ -1,0 +1,316 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Information</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
+    <style>
+
+    h1 {
+        font-family: Poppins, sans-serif;
+        text-align: center;
+        font-size: 25px !important;
+        margin-top: 8rem !important;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    form {
+        max-width: 400px;
+        margin: auto;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    select, input[type="submit"] {
+        width: calc(100% - 22px);
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    input[type="submit"] {
+        background-color: #357867;
+        color: white;
+        cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+        background-color: gray;
+    }
+
+    .loading-container {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .loading {
+        display: none;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 3px solid #357867;
+        -webkit-animation: spin 1s linear infinite;
+        animation: spin 1s linear infinite;
+    }
+
+    @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .result-container {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .result {
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    .Map {
+        display: block;
+        margin: auto;
+        width: 50%;
+        height: 350px;
+        border: 6px solid transparent;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        margin-bottom: 20px;
+    }
+
+    label[for="campSelect"] {
+        text-align: left;
+        display: block;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        padding-left: 10px;
+    }
+
+    .work-rest-ratio-message {
+        font-size: 15px;
+        font-weight: normal;
+        margin: 2px;
+    }
+
+
+    </style>
+</head>
+<body>
+    {% include 'header.html' %} <!-- https://stackoverflow.com/questions/8988855/include-another-html-file-in-a-html-file -->
+
+    <h1>Singapore Armed Forces Camps</h1>
+    <div class="loading-container">
+        <span id="loading" class="loading"></span>
+    </div>
+    <div class="result-container">
+        <div id="result" class="result"></div>
+    </div>
+    <div id="map" class="Map"></div>
+    <form id="campForm">
+        <label for="campSelect" style="font-weight: bold;">Select a camp:</label>
+        <select id="campSelect" name="camp">
+            <option value="" disabled selected>Select Camp</option>
+
+            <option value="Ang Mo Kio">Amoy Quee Camp</option>
+
+            <option value="Tanah Merah">Bedok Camp I</option>
+
+            <option value="Clementi">Clementi Camp</option>
+
+            <option value="Bukit Merah">Depot Road Camp</option>
+
+            <option value="Yishun">Dieppe Barracks</option>
+
+            <option value="Bukit Batok">Gombak Base</option>
+
+            <option value="Changi">Hendon Camp</option>
+
+            <option value="Jurong West">Jurong Camp I</option>
+
+            <option value="Kaki Bukit">Kaki Bukit Camp</option>
+
+            <option value="Tengah">Keat Hong Camp</option>
+
+            <option value="Yishun">Khatib Camp</option>
+
+            <option value="Yew Tee">Mowbray Camp</option>
+
+            <option value="Pulau Tekong">Ladang Camp</option>
+
+            <option value="Clementi">Maju Camp</option>
+
+            <option value="Mandai">Mandai Hill Camp</option>
+
+            <option value="Yishun">Nee Soon Camp</option>
+
+            <option value="Jurong West">Pasir Laba Camp</option>
+
+            <option value="Pasir Ris">Pasir Ris Camp</option>
+
+            <option value="Bukit Timah">Rifle Range Road Camp</option>
+
+            <option value="Jurong West">SAFTI Military Institute</option>
+
+            <option value="Changi">Selarang Camp</option>
+
+            <option value="Seletar">Seletar Camp</option>
+
+            <option value="Sembawang">Sembawang Camp</option>
+
+            <option value="Choa Chu Kang">Stagmont Camp</option>
+
+            <option value="Western Water Catchment">Sungei Gedong Camp</option>
+
+        </select>
+        <input type="submit" value="Get Temperature Risk">
+    </form>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+
+    var map = L.map('map', {
+        maxZoom: 16, // Limit max zoom level
+        minZoom: 10 // Limit min zoom level
+    }).setView([1.3600, 103.8198], 10.5); // Set the initial center and zoom level
+
+    // Add a tile layer (OpenStreetMap)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Define bounds for Singapore
+    var singaporeBounds = L.latLngBounds(
+        L.latLng(1.19, 103.62), // South West
+        L.latLng(1.50, 104.05)  // North East
+    );
+
+    // Restrict map to bounds
+    map.setMaxBounds(singaporeBounds);
+    map.on('drag', function() {
+        map.panInsideBounds(singaporeBounds, { animate: false });
+    });
+
+    // Array of GPS locations
+            var gpsLocations = [
+    {lat: 1.3857, lng: 103.8522, name: "Amoy Quee Camp",selectedCamp:'Ang Mo Kio' },
+    {lat: 1.3157, lng: 103.9540, name: "Bedok Camp I",selectedCamp:'Tanah Merah' },
+    {lat: 1.3290, lng: 103.7629, name: "Clementi Camp",selectedCamp:'Clementi' },
+    {lat: 1.2804, lng: 103.8147, name: "Depot Road Camp",selectedCamp:'Bukit Merah' },
+    {lat: 1.4222, lng: 103.8231, name: "Dieppe Barracks",selectedCamp:'Yishun' },
+    {lat: 1.3587, lng: 103.7517, name: "Gombak base",selectedCamp:'Bukit Batok' },
+    {lat: 1.3885, lng: 103.9759, name: "Hendon Camp",selectedCamp:'Changi' },
+    {lat: 1.3330, lng: 103.6896, name: "Jurong Camp I",selectedCamp:'Jurong West' },
+    {lat: 1.3393, lng: 103.9075, name: "Kaki Bukit Camp",selectedCamp:'Kaki Bukit' },
+    {lat: 1.3737, lng: 103.7167, name: "Keat Hong Camp",selectedCamp:'Tengah' },
+    {lat: 1.4223, lng: 103.8256, name: "Khatib Camp",selectedCamp:'Yishun' },
+    {lat: 1.3980, lng: 103.7409, name: "Mowbray Camp",selectedCamp:'Kranji' },
+    {lat: 1.4143, lng: 104.0387, name: "Ladang Camp",selectedCamp:'Pulau Tekong' },
+    {lat: 1.3290, lng: 103.7747, name: "Maju Camp",selectedCamp:'Clementi' },
+    {lat: 1.4082, lng: 103.7690, name: "Mandai Hill Camp",selectedCamp:'Mandai' },
+    {lat: 1.4058, lng: 103.8170, name: "Neesoon Camp",selectedCamp:'Yishun' },
+    {lat: 1.3322, lng: 103.6721, name: "Pasir Laba Camp",selectedCamp:'Jurong West' },
+    {lat: 1.3721, lng: 103.9474, name: "Pasir Ris Camp",selectedCamp:'Pasir Ris' },
+    {lat: 1.3544, lng: 103.7887, name: "Rifle Range Road Camp",selectedCamp:'Bukit Timah' },
+    {lat: 1.3337, lng: 103.6803, name: "SAFTI Military Institute",selectedCamp:'Jurong West' },
+    {lat: 1.3716, lng: 103.9753, name: "Selarang Camp",selectedCamp:'Changi' },
+    {lat: 1.4113, lng: 103.8742, name: "Seletar Camp",selectedCamp:'Seletar' },
+    {lat: 1.4640, lng: 103.8158, name: "Sembawang Camp",selectedCamp:'Sembawang' },
+    {lat: 1.3847, lng: 103.7526, name: "Stagmont Camp",selectedCamp:'Choa Chu Kang' },
+    {lat: 1.4201, lng: 103.6956, name: "Sungei Gedong Camp",selectedCamp:'Western Water Catchment' }]
+
+
+
+
+    // Add GPS symbol markers for each location
+    gpsLocations.forEach(function(location) {
+        var gpsIcon = L.icon({
+            iconUrl: 'static/Images/gps_icon.png',
+            iconSize: [32, 32], // size of the icon
+            iconAnchor: [16, 16] // point of the icon which will correspond to marker's location
+        });
+
+        // Create marker with tooltip
+        var marker = L.marker([location.lat, location.lng], {icon: gpsIcon}).addTo(map);
+        marker.bindTooltip(location.name); // Add tooltip with camp name
+
+        // Add event listeners to show tooltip only on hover
+        marker.on('mouseover', function(event) {
+            marker.openTooltip();
+        });
+
+        marker.on('mouseout', function(event) {
+            marker.closeTooltip();
+        });
+
+        // Add click event listener to each marker
+        marker.on('click', function(event) {
+            fetchWeatherAndDisplay(location.selectedCamp);
+        });
+    });
+
+    const campSelect = document.getElementById('campSelect'); // Select dropdown
+    const resultDiv = document.getElementById('result');
+    const loadingIcon = document.getElementById('loading');
+    const campForm = document.getElementById('campForm');
+
+    campSelect.addEventListener('change', function(event) {
+    resultDiv.innerHTML = ''; // Clear previous result
+    });
+
+    // Event listener for form submission
+    campForm.addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent default form submission behavior
+        const selectedCamp = campSelect.value;
+        if(selectedCamp) {
+            fetchWeatherAndDisplay(selectedCamp);
+        }
+    });
+
+   function fetchWeatherAndDisplay(selectedCamp) {
+    // Show loading icon
+    loadingIcon.style.display = 'inline-block';
+    // Clear previous result
+    resultDiv.innerHTML = '';
+    fetch(`/get_weather_risk?location=${selectedCamp}`)
+        .then(response => response.json())
+        .then(data => {
+            const location_c = data.location_c;
+            const temperature = data.temperature;
+            const risk = data.risk;
+            const work_duration = data.work_duration;
+            const break_duration = data.break_duration;
+            // Create a <span> element for the work-rest-ratio message
+            const workRestRatioMessage = document.createElement('span');
+            // Apply specific class to the work-rest-ratio message
+            workRestRatioMessage.classList.add('work-rest-ratio-message');
+            // Set the content and style of the work-rest-ratio message
+            workRestRatioMessage.innerHTML = `Work-Rest-Ratio: For every ${work_duration} mins of exercise, take ${break_duration} mins of break`;
+            // Construct the rest of the message
+            const message = `Location of Camp: ${location_c}<br>Current temperature: ${temperature}°C<br>Risk Level: ${risk}<br>`;
+            // Append both the main message and the work-rest-ratio message to the resultDiv
+            resultDiv.innerHTML = message;
+            resultDiv.appendChild(workRestRatioMessage);
+            // Hide loading icon
+            loadingIcon.style.display = 'none';
+        });
+}
+    </script>
+
+</body>
+</html>

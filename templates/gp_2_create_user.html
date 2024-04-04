@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/static/create_user.css">
+</head>
+<body>
+{% include 'header.html' %} <!-- https://stackoverflow.com/questions/8988855/include-another-html-file-in-a-html-file -->
+    <div class="login-wrap">
+        <div class="login">
+            <div class="avatar"></div>
+            <span class="user">TEMPSG</span>
+            <hr class="line">
+            <span class="small-text">Please enter your own user ID of at least 1 character</span>
+            <form id="login" class="login-form" action="/gp_2_create_user" method="post">
+                <input type="text" name="user_id" placeholder="User_id" class="pass"/>
+                <span class="arrow">&rarr;</span>
+            </form>
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
+
+
+

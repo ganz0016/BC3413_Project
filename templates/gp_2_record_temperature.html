@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Heat Exhaustion Tracker</title>
+    <link rel="stylesheet" type="text/css" href="/static/record_temperature_details.css">
+</head>
+<body>
+    <div class="header" style="margin-bottom: 8rem !important;">
+        {% include 'header.html' %} <!-- https://stackoverflow.com/questions/8988855/include-another-html-file-in-a-html-file -->
+    </div>
+
+    <div class="form-box">
+        <h1> Heat Exhaustion Tracker </h1>
+        <h2> Enter your details </h2>
+        <form action="/gp_2_record_temperature" method="post">
+            <label for="body_temperature">Enter your body temperature (in Celsius):</label><br>
+            <input type="number" id="body_temperature" name="body_temperature" required step="0.01" min="34" max="60"><br>
+            <label for="heart_rate">Enter your heart rate (in bpm):</label><br>
+            <input type="number" id="heart_rate" name="heart_rate" required min="27" max="200"><br>
+            <label for="sweat_chloride">Enter your sweat chloride (in mmol/L):</label><br>
+            <input type="number" id="sweat_chloride" name="sweat_chloride" required step="0.01" min="0" max="145"><br>
+            <label for="obesity">Are you obese? (Y/N)</label><br>
+            <input type="text" id="obesity" name="obesity" required pattern="[YyNn]"><br> # <!-- https://stackoverflow.com/questions/59344634/pure-html-input-type-text-validation-using-pattern -->
+            <label for="heart_disease">Do you have heart disease? (Y/N)</label><br>
+            <input type="text" id="heart_disease" name="heart_disease" required pattern="[YyNn]"><br>
+            <label for="high_blood_pressure">Do you have high blood pressure? (Y/N)</label><br>
+            <input type="text" id="high_blood_pressure" name="high_blood_pressure" required pattern="[YyNn]"><br>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

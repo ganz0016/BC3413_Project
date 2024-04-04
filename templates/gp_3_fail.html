@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wrong Entry</title>
+    <style>
+        body {
+            font-family: Poppins, sans-serif;
+            margin: 20px auto;
+            width: 100%;
+            max-width: 600px;
+            background-position: top center;
+        }
+
+        h1, h2 {
+            font-family: Poppins, sans-serif;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 25px !important;
+            margin-top: 8rem !important;
+        }
+
+        h2 {
+            font-size: 20px !important;
+        }
+
+        p {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .button-container {
+            text-align: center;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #357867;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .button:hover {
+            background-color: #357867;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %} <!-- https://stackoverflow.com/questions/8988855/include-another-html-file-in-a-html-file -->
+    <h1>ACCESS DENIED</h1>
+    <h2>You have entered the wrong User ID!</h2>
+    <p>Please click the button below to return to the homepage</p>
+    <div class="button-container">
+        <a href="http://localhost:5000/"  class="button">Go to Homepage</a>
+    </div>
+</body>
+</html>
+
